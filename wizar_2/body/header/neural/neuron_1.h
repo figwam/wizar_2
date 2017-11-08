@@ -51,7 +51,7 @@ protected:
 								minDistance = distance;
 						}
 					}
-					weight[position] /= minDistance * 2;
+					weight[position] /= minDistance * 1.0;
 					if (weight[position] > 0)
 						positiveWeight += weight[position];
 					else

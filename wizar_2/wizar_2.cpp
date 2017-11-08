@@ -31,23 +31,9 @@ int main()
 	//детектирование границ
 	neuron_1<n, n>::borderDetector(grayTest, lauer, dst_2);
 
-	IplImage* first = cvCloneImage(dst_2);
 	list<Form> forms;
 	//группировка
-	group(dst_2, forms, 1);
-	list<Form>::iterator iter = forms.begin();
-	while (iter != forms.end())
-	{
-		if (iter->size <= 10)
-		{
-			iter = forms.erase(iter);
-		}
-		else
-		{
-
-			++iter;
-		}
-	}
+	group(dst_2, forms, 15);
 
 	//отображение
 	viewForm(forms, test);
