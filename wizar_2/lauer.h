@@ -29,7 +29,7 @@ public:
 		this->size = counter;
 	}
 	//длина массива
-	unsigned int length() 
+	unsigned int length()
 	{
 		return this->size;
 	}
