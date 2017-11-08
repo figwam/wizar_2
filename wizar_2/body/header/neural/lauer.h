@@ -1,7 +1,6 @@
 #pragma once
-#include "stdafx.h";
+#include "stdafx.h"
 #include <list>
-#include "point.h"
 
 using namespace std;
 

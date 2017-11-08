@@ -1,8 +1,8 @@
 #pragma once
 #include "stdafx.h";
 #include <list>
-#include "point.h"
-#include "lauer.h"
+#include "body/header/point.h"
+#include "body/header/neural/lauer.h"
 
 using namespace std;
 /*
@@ -51,7 +51,7 @@ protected:
 								minDistance = distance;
 						}
 					}
-					weight[position] /= minDistance;
+					weight[position] /= minDistance * 2;
 					if (weight[position] > 0)
 						positiveWeight += weight[position];
 					else
@@ -59,6 +59,7 @@ protected:
 				}
 			}
 		}
+
 	}
 public:	
 	~neuron_1()
@@ -384,7 +385,7 @@ public:
 			maxAverage, maxCount, //максимальное среднее яркости пикселей и их счётчик
 			negative, positive, borderWeight,
 			case_1, case_2,
-			per = 0.94; //достоверность
+			per = 0.96; //достоверность
 		float* weig;
 
 		uchar* str;
@@ -447,7 +448,7 @@ public:
 					counter = 0;
 					weig = lauer[c]->weight;
 					//первый случай: отрицательные веса попали на яркую часть изображения
-			//		case_1 = (lauer[c]->negativeWeight - lauer[c]->piksels * 2) * maxAverage + lauer[c]->positiveWeight * minAverage;
+					case_1 = (lauer[c]->negativeWeight - lauer[c]->piksels * 2) * maxAverage + lauer[c]->positiveWeight * minAverage;
 
 					//второй случай: положительные веса попали на яркую часть изображения
 					case_2 = (lauer[c]->positiveWeight + lauer[c]->piksels * 2) * maxAverage + lauer[c]->negativeWeight * minAverage;
@@ -470,11 +471,11 @@ public:
 						}
 					}
 					
-			//		if ((negative - borderWeight + positive) <= case_1 * per)
-			///		{
-			//			dtr[j] = 255;
-			//			break;
-			//		}
+					if ((negative - borderWeight + positive) <= case_1 * per)
+					{
+						dtr[j] = 255;
+						break;
+					}
 					if ((positive + borderWeight + negative) >= case_2 * per)
 					{
 						dtr[j] = 255;
@@ -492,77 +493,4 @@ public:
 		cvReleaseImage(&image);
 	}
 
-	static void borderDetectorLight(IplImage* image, list<neuron_1<x, y> >& lauer, IplImage* dst)
-	{
-		const int yHalf = y / 2,
-			xHalf = x / 2,
-			borderTop = yHalf, //ограничение сверху
-			borderBottom = image->height - borderTop,//ограничение снизу
-			borderLeft = xHalf,//ограничение слува
-			borderRight = image->width - borderLeft;//ограничение справа
-		short int delt, deltMax, response;
-		uchar* dtr;
-		uchar* str;
-		uchar* top;
-		uchar* bottom;
-		for (int i = borderTop; i < borderBottom; ++i)
-		{
-		//	cout << i << "\t" << borderBottom << endl;
-
-			dtr = (uchar*)(dst->imageData + i * dst->widthStep);
-			str = (uchar*)(image->imageData + i * image->widthStep);
-			top = (uchar*)(image->imageData + (i - 1) * image->widthStep);
-			bottom = (uchar*)(image->imageData + (i + 1) * image->widthStep);
-			for (int j = borderLeft; j < borderRight; ++j)
-			{
-				deltMax = abs(str[j - 1] - str[j + 1]);
-				for (short int c = -1; c < 2; c++)
-				{
-					delt = abs(top[j - c] - bottom[j + c]);
-					if (delt > deltMax)
-						deltMax = delt;
-				}
-				if (deltMax > 15)
-				{
-					dtr[j] = deltMax;
-				}
-				else
-					dtr[j] = 0;
-			}
-		}
-
-		for (int i = borderTop; i < borderBottom; ++i)
-		{
-			cout << i << "\t" << borderBottom << endl;
-
-			dtr = (uchar*)(dst->imageData + i * dst->widthStep);
-
-			for (int j = borderLeft; j < borderRight; ++j)
-			{
-				list<neuron_1<x, y> >::const_iterator iter = lauer.begin();
-				while (iter != lauer.end())
-				{
-					response = 0;
-					for (short int a = 0; a < y; ++a)
-					{
-						for (short int b = 0; b < iter->length[a]; ++b)
-						{
-					//		cout << "iter = " << iter->vectors[a*x + b] + j << endl;
-					//		cout << a + i - yHalf - 1 << "\t" << iter->vectors[a*x + b] + j << endl;
-							response += getPiksel(dst, iter->vectors[a*x + b] + j, a + i - yHalf - 1);
-						}
-					}
-					++iter;
-				}
-			}
-		}
-
-		cvNamedWindow("grayTest");
-		cvShowImage("grayTest", image);
-		cvNamedWindow("neuron 1 layer");
-		cvShowImage("neuron 1 layer", dst);
-		cvWaitKey(0);
-		cvDestroyWindow("neuron 1 layer");
-		cvReleaseImage(&image);
-	}
 };

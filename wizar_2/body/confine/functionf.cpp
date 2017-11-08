@@ -1,7 +1,76 @@
 #include "stdafx.h"
-#include "function.h"
 
-
+/*
+	Увеличение контраста
+*/
+void contrast(IplImage* src)
+{
+	float average = 0,
+		averageMin = 0,
+		countMin = 0,
+		averageMax = 0,
+		countMax = 0,
+		factor;
+	for (int i = 0; i < src->height; i++)
+	{
+		uchar* str = (uchar*)(src->imageData + i * src->widthStep);
+		for (int j = 0; j < src->width; j++)
+		{
+			average += str[j];
+		}
+	}
+	average /= src->height * src->width;
+	//Нахождение максимального и минимального среднего значений яркости
+	for (int i = 0; i < src->height; i++)
+	{
+		uchar* str = (uchar*)(src->imageData + i * src->widthStep);
+		for (int j = 0; j < src->width; j++)
+		{
+			if (str[j] < average)
+			{
+				averageMin += str[j];
+				++countMin;
+			}
+			else
+			{
+				averageMax += str[j];
+				++countMax;
+			}
+		}
+	}
+	averageMin /= countMin;
+	averageMax /= countMax;
+	factor = 1 + (255.0 + averageMax + averageMin) / 255.0;
+	cout << (255.0 + averageMax + averageMin) / 255.0 << endl;
+	for (int i = 0; i < src->height; i++)
+	{
+		uchar* str = (uchar*)(src->imageData + i * src->widthStep);
+		for (int j = 0; j < src->width; j++)
+		{
+			//смещение влево
+			if (averageMin != 0)
+			{
+				if (str[j] > averageMin)
+					str[j] = str[j] - averageMin;
+				else
+					str[j] = 0;
+			}
+			if (averageMax != 0)
+			{
+				if (str[j] < averageMax)
+				{
+					if (str[j] * factor < 255)
+						str[j] *= factor;
+					else
+						str[j] = 255;
+				}
+			}
+		}
+	}
+//	cvNamedWindow("w");
+//	cvShowImage("w", src);
+//	cvWaitKey(0);
+}
 /*
 вернёт значение пикселя
 */
@@ -176,7 +245,7 @@ list<Form>& group(IplImage* bin, list<Form>& repository, const int radius, const
 		winLeft,
 		winRight;
 	uchar* str;
-	uchar* win;
+	
 	queue<Point> pik;
 	for (int i = radius; i < bin->height; ++i)
 	{
@@ -196,13 +265,14 @@ list<Form>& group(IplImage* bin, list<Form>& repository, const int radius, const
 				{
 					//Установка геометрических размеров окна вокруг белого пикселя
 					winTop = pik.front().y - radius;
-					winBottom = pik.front().y + radius;
+					winBottom = pik.front().y + radius - 1;
 					winLeft = pik.front().x - radius;
-					winRight = pik.front().x + radius;
+					winRight = pik.front().x + radius - 1;
 
 					for (int a = winTop; a < winBottom; ++a)
 					{
-						win = (uchar*)(bin->imageData + a * bin->widthStep);
+						
+						uchar*  win = (uchar*)(bin->imageData + a * bin->widthStep);
 						for (int b = winLeft; b < winRight; ++b)
 						{
 							//поиск других белых пикселей
@@ -212,7 +282,7 @@ list<Form>& group(IplImage* bin, list<Form>& repository, const int radius, const
 								point.x = b;
 								point.y = a;
 								form.add(point);
-								if(radius < a < borderBottom && radius < b < borderRifht)
+								if(a >= radius && a < borderBottom && b >= radius && b < borderRifht)
 									pik.push(point);
 							}
 						}

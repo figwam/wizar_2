@@ -1,14 +1,9 @@
 #include "stdafx.h"
-#include "form.h"
+#include "body/header/form.h"
 
 Form::Form() : maxY(-1), maxX(-1), minY(-1), minX(-1), size(0){}
 void Form::add(Point point)
 {
-	if (point.y > 380)
-	{
-		cout << "point.y = " << point.y << endl;
-		system("pause");
-	}
 	if (maxY < 0)
 	{
 		maxX = point.x;
@@ -89,4 +84,9 @@ void Form::view()
 		cvDestroyWindow("view Form");
 		cvReleaseImage(&image);
 	}
+}
+
+void inflict(IplImage* image, const Form& form)
+{
+
 }

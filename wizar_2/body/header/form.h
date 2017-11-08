@@ -22,4 +22,5 @@ struct Form
 	//визуализация
 	void view();
 
+	void inflict(IplImage*, const Form&);
 };

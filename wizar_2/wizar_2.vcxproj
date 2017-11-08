@@ -71,6 +71,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -145,18 +146,19 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="form.h" />
-    <ClInclude Include="function.h" />
-    <ClInclude Include="lauer.h" />
-    <ClInclude Include="neuron_1.h" />
-    <ClInclude Include="point.h" />
+    <ClInclude Include="body\header\form.h" />
+    <ClInclude Include="body\header\function.h" />
+    <ClInclude Include="body\header\neural\lauer.h" />
+    <ClInclude Include="body\header\neural\neuron_1.h" />
+    <ClInclude Include="body\header\neural\winNeuro.h" />
+    <ClInclude Include="body\header\point.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="form.cpp" />
-    <ClCompile Include="functionf.cpp" />
-    <ClCompile Include="point.cpp" />
+    <ClCompile Include="body\confine\form.cpp" />
+    <ClCompile Include="body\confine\functionf.cpp" />
+    <ClCompile Include="body\confine\point.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

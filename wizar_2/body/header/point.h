@@ -1,6 +1,5 @@
 #pragma once
-#include "stdafx.h"
-
+#include "body/header/point.h"
 struct Point
 {
 	int x;
