@@ -67,9 +67,9 @@ void contrast(IplImage* src)
 			}
 		}
 	}
-//	cvNamedWindow("w");
-//	cvShowImage("w", src);
-//	cvWaitKey(0);
+	cvNamedWindow("w");
+	cvShowImage("w", src);
+	cvWaitKey(0);
 }
 /*
 вернёт значение пикселя
@@ -350,4 +350,51 @@ void viewForm(list<Form> forms, IplImage* src)
 	cvDestroyWindow("dst");
 	cvDestroyWindow("src");
 	cvReleaseImage(&dst);
+}
+
+void filter(IplImage* image, list<Form> forms, const int size, const int val)
+{
+	list<Form>::iterator iter = forms.begin();
+	uchar* str;
+	while (iter != forms.end())
+	{
+		if (iter->size > size)
+		{
+			if (val == -1)
+			{
+				list<Point>::const_iterator it = iter->piksels.cbegin();
+				while (it != iter->piksels.end())
+				{
+					str = (uchar*)(image->imageData + it->y * image->widthStep);
+					str[it->x] = 255;
+					++it;
+				}
+				++iter;
+			}
+			else
+			{
+				if (iter->size / (iter->maxX - iter->minX + iter->maxY - iter->minY) <= val)
+				{
+					list<Point>::const_iterator it = iter->piksels.cbegin();
+					while (it != iter->piksels.end())
+					{
+						str = (uchar*)(image->imageData + it->y * image->widthStep);
+						str[it->x] = 255;
+						++it;
+					}
+					++iter;
+				}
+				else
+				{
+					iter = forms.erase(iter);
+				}
+			}
+		}
+		else
+		{
+			iter = forms.erase(iter);
+		}
+	}
+	cvNamedWindow("filter");
+	cvShowImage("filter", image);
 }

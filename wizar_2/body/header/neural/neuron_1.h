@@ -51,7 +51,7 @@ protected:
 								minDistance = distance;
 						}
 					}
-					weight[position] /= minDistance * 1.0;
+					weight[position] /= minDistance * 1.8;
 					if (weight[position] > 0)
 						positiveWeight += weight[position];
 					else
@@ -364,12 +364,13 @@ public:
 
 	/*
 		Детектор границ
-		image - чёрно-белое изображение
+		image - чёрно-белое, детектируемое изображение
 		lauer - массив персептронов типа "Lauer"
+		dst - изображение, куда будет помещён результат
 	*/
-	static void borderDetector( IplImage* image, Lauer<neuron_1<x, y> >& lauer, IplImage* dst)
+	static void borderDetector(IplImage* image, Lauer<neuron_1<x, y> >& lauer, IplImage* dst)
 	{
-		const short int delt = 20;
+		const short int delt = 25;
 		const int sizeLauer = lauer.length(),
 			yHalf = y / 2,
 			xHalf = x / 2,

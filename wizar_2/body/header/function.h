@@ -22,3 +22,5 @@ void ini(IplImage* image, short int val = 0);
 list<Form>& group(IplImage*, list<Form>&, const int, const int filter = 10);
 
 void viewForm(list<Form>, IplImage*);
+
+void filter(IplImage* image, list<Form> forms, const int  size, const int val = -1);
